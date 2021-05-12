@@ -21,3 +21,13 @@ sudo systemctl daemon-reload
 sudo systemctl start upHILkeyboard
 sudo systemctl enable upHILkeyboard
 fi
+
+if systemctl | grep rf-kserver; then
+echo exists "upHILkeyboard"
+else
+sudo cp /share/rf-kserver.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl start rf-kserver
+sudo systemctl enable rf-kserver
+fi
+

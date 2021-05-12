@@ -29,5 +29,3 @@ ln -s functions/hid.usb0 configs/c.1/
 # see gadget configurations below
 # End functions
 ls /sys/class/udc > UDC
-
-chmod 777 /dev/hidg0
