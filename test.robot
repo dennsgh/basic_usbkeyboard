@@ -7,4 +7,4 @@ ${PORT}     8270
 
 *** Test Cases ***
 Send String
-    keyboardDevice.Send String     test
+    keyboardDevice.Send String     TEST
