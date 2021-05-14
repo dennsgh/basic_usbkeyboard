@@ -1,0 +1,13 @@
+[Unit]
+Description=Robotframework upHIL USB Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/share
+ExecStart=/share/rf_kserver.py
+
+[Install]
+WantedBy=multi-user.target
