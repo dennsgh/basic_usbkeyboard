@@ -1,7 +1,4 @@
 # currently missing some other important keystrokes
-# SHIFT is apparently a modifier instead of an actualy keystroke
-# Function keys F1 to F12?
-# Enter/Return?
 # FORMAT is first two bytes are MODIFIER keys, 0x00XXXXXX means whatever you send had no modifier keys
 # 0xXX580000 is ENTER for example, with 0xE2580000 it'd be ENTER with ALT
 
@@ -10,6 +7,7 @@ class keyboardDevice:
     rel_seq = NULL_CHAR*8
     def write_report(self,report):
         with open('/dev/hidg0', 'rb+') as fd:
+            print(report.encode())
             fd.write(report.encode())
     def release(self):
         with open('/dev/hidg0', 'rb+') as fd:
@@ -44,6 +42,10 @@ class keyboardDevice:
     def sendCTRL(self):
         NULL_CHAR = self.NULL_CHAR
         self.write_report(chr(1)+NULL_CHAR*7)
+
+    def sendALT(self):
+        NULL_CHAR = self.NULL_CHAR
+        self.write_report(chr(4)+NULL_CHAR*7)
         self.release()
     def sendENTER(self):
         NULL_CHAR = self.NULL_CHAR
@@ -53,7 +55,7 @@ class keyboardDevice:
     def sendFunction(self,x):
         if x>=1 and x<=12:
             NULL_CHAR = self.NULL_CHAR
-            self.write_report(NULL_CHAR*2+chr(58+x)+NULL_CHAR*5)
+            self.write_report(NULL_CHAR*2+chr(57+x)+NULL_CHAR*5)
             self.release()
         else:
             print("Invalid function key!")
@@ -74,11 +76,23 @@ class keyboardDevice:
         self.write_report(NULL_CHAR*2+chr(43)+NULL_CHAR*5)
         self.release()
     def sendALTTAB(self):
-        NULL_CHAR = self.NULL_CHAR
-        print((chr(0)+chr(4)+chr(43)+NULL_CHAR*5).encode())
+        NULL_CHAR = self.NULL_CHAR   
         self.write_report(chr(14)+chr(2)+chr(43)+NULL_CHAR*5)
         self.release()
-    def sendRETURN(self):
+    def sendBACKSPACE(self,n):
         NULL_CHAR = self.NULL_CHAR
-        self.write_report(NULL_CHAR*2+chr(9)+chr(E)+NULL_CHAR*5)
-        self.release()
+        for i in range(n):
+            self.write_report(NULL_CHAR*2+chr(42)+NULL_CHAR*5)
+            self.release()
+    def sendDEL(self,n):
+        NULL_CHAR = self.NULL_CHAR
+        for i in range(n):
+            self.write_report(NULL_CHAR*2+chr(76)+NULL_CHAR*5)
+            self.release()
+    def sendALTFunction(self,x):
+        if x>=1 and x<=12:
+            NULL_CHAR = self.NULL_CHAR
+            self.write_report(chr(14)+chr(2)+chr(57+x)+NULL_CHAR*5)
+            self.release()
+        else:
+            print("Invalid function key!")
