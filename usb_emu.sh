@@ -12,7 +12,7 @@ echo 0x0100 > bcdDevice # v1.0.0
 echo 0x0200 > bcdUSB # USB2
 mkdir -p strings/0x409
 echo "12052021" > strings/0x409/serialnumber
-echo "shroomie" > strings/0x409/manufacturer
+echo "manufacturer" > strings/0x409/manufacturer
 echo "upHIL Keyboard USB Device" > strings/0x409/product
 mkdir -p configs/c.1/strings/0x409
 echo "Config 1: ECM network" > configs/c.1/strings/0x409/configuration
