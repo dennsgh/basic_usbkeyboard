@@ -130,14 +130,16 @@ class keyboardDevice:
                 self.release()
             else:
                 if keystr in keyDict:
+                    print("Sending "+modifier+"+"+keystr+"...")
                     KEY_CHAR = keyDict.get(keystr)
                     self.write_report(MODI_CHAR+KEY_CHAR)
                     self.release()
                 else:
                     for c in keystr:
-                        print("Sending "+c+"...")
+                        print("Sending "+modifier+"+"+c+"...")
                         KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
                         self.write_report(MODI_CHAR+KEY_CHAR)
                         self.release()
         else:
             print("Argument is not a string!")
+            return
