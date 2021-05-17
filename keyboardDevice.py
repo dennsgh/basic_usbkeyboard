@@ -167,6 +167,3 @@ class keyboardDevice:
                     KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
                     self.write_report(MODI_CHAR+KEY_CHAR)
                     self.release()
-
-k = keyboardDevice()
-k.sendKey("f1","ctrl alt")
