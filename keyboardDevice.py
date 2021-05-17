@@ -1,30 +1,32 @@
+import time
 # currently missing some other important keystrokes
 # FORMAT is first two bytes are MODIFIER keys, 0x00XXXXXX means whatever you send had no modifier keys
 # 0xXX580000 is ENTER for example, with 0xE2580000 it'd be ENTER with ALT
 NULL_CHAR = chr(0)
-modiDict = {"ctrl": (chr(14)+chr(1)), 
-            "alt": chr(14)+chr(2), 
-            "ctrl alt": chr(0)+chr(5), 
-            "alt ctrl": chr(0)+chr(5), 
+modiDict = {"ctrl": chr(1)+NULL_CHAR, 
+            "alt": chr(4)+NULL_CHAR, 
+            "ctrl alt": chr(5), 
+            "alt ctrl": chr(5), 
 }
 # if key is not dictionary - > send individual keys (like ctrl c)
-keyDict = { "del": (NULL_CHAR*2+chr(76)+NULL_CHAR*5),
-            "esc": (NULL_CHAR*2+chr(41)+NULL_CHAR*5),
-            "enter": (NULL_CHAR*2+chr(40)+NULL_CHAR*5),
-            "backspace":(NULL_CHAR*2+chr(42)+NULL_CHAR*5),
-            "f1":(chr(14)+chr(2)+chr(58)+NULL_CHAR*5), 
-            "f2":(chr(14)+chr(2)+chr(59)+NULL_CHAR*5),
-            "f3":(chr(14)+chr(2)+chr(60)+NULL_CHAR*5),
-            "f4":(chr(14)+chr(2)+chr(61)+NULL_CHAR*5),
-            "f5":(chr(14)+chr(2)+chr(62)+NULL_CHAR*5),
-            "f6":(chr(14)+chr(2)+chr(63)+NULL_CHAR*5),
-            "f7":(chr(14)+chr(2)+chr(64)+NULL_CHAR*5),
-            "f8":(chr(14)+chr(2)+chr(65)+NULL_CHAR*5),
-            "f9":(chr(14)+chr(2)+chr(66)+NULL_CHAR*5),
-            "f10":(chr(14)+chr(2)+chr(67)+NULL_CHAR*5),
-            "f11":(chr(14)+chr(2)+chr(68)+NULL_CHAR*5),
-            "f12":(chr(14)+chr(2)+chr(69)+NULL_CHAR*5),
-            "tab":(NULL_CHAR*2+chr(43)+NULL_CHAR*5)
+keyDict = { "del": (NULL_CHAR+chr(76)+NULL_CHAR*5),
+            "esc": (chr(41)+NULL_CHAR*5),
+            "enter": (chr(40)+NULL_CHAR*5),
+            "backspace":(chr(42)+NULL_CHAR*5),
+            "f1":(chr(58)+NULL_CHAR*5), 
+            "f2":(chr(59)+NULL_CHAR*5),
+            "f3":(chr(60)+NULL_CHAR*5),
+            "f4":(chr(61)+NULL_CHAR*5),
+            "f5":(chr(62)+NULL_CHAR*5),
+            "f6":(chr(63)+NULL_CHAR*5),
+            "f7":(chr(64)+NULL_CHAR*5),
+            "f8":(chr(65)+NULL_CHAR*5),
+            "f9":(chr(66)+NULL_CHAR*5),
+            "f10":(chr(67)+NULL_CHAR*5),
+            "f11":(chr(68)+NULL_CHAR*5),
+            "f12":(chr(69)+NULL_CHAR*5),
+            "tab":(chr(43)+NULL_CHAR*5),
+            "capslock":(chr(57)+NULL_CHAR*5)
 }
 
 class keyboardDevice:
@@ -142,9 +144,10 @@ class keyboardDevice:
         
     def sendKey(self,keystr,modifier=None):
         NULL_CHAR = self.NULL_CHAR
-        
         KEY_CHAR = NULL_CHAR*6
         keystr = keystr.lower()
+
+
         if modifier is None:
             MODI_CHAR = NULL_CHAR*2
         elif isinstance(modifier, str) :
@@ -152,14 +155,20 @@ class keyboardDevice:
             MODI_CHAR = modiDict.get(modifier)
         else:
             print("Invalid argument!")
+
+
         if isinstance(keystr, str):
             if keystr in keyDict:
                 KEY_CHAR = keyDict.get(keystr)
-        elif isinstance(keystr, chr):
-            KEY_CHAR = self.char_to_reports_NO_MODIFIER(keystr)
+                self.write_report(MODI_CHAR+KEY_CHAR)
+                self.release()
+            else:
+                for c in keystr:
+                    print("Sending "+c+"...")
+                    KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
+                    self.write_report(MODI_CHAR+KEY_CHAR)
+                    self.release()
             
-        self.write_report(MODI_CHAR+KEY_CHAR)
-        self.release()
+        
 k = keyboardDevice()
-
-k.sendKey("tab","alt")
+k.sendKey("del","ctrl")
