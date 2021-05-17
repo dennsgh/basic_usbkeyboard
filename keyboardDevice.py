@@ -3,9 +3,20 @@
 # 0xXX580000 is ENTER for example, with 0xE2580000 it'd be ENTER with ALT
 NULL_CHAR = chr(0)
 modiDict = {"ctrl": chr(1)+NULL_CHAR, 
-            "alt": chr(4)+NULL_CHAR, 
+            "alt": chr(4)+NULL_CHAR,
+            "shift": chr(2)+NULL_CHAR, 
             "ctrl alt": chr(5)+NULL_CHAR, 
-            "alt ctrl": chr(5)+NULL_CHAR, 
+            "alt ctrl": chr(5)+NULL_CHAR,
+            "shift ctrl": chr(3)+NULL_CHAR,
+            "ctrl shift": chr(3)+NULL_CHAR, 
+            "alt shift": chr(6)+NULL_CHAR,
+            "shift alt": chr(6)+NULL_CHAR,
+            "ctrl shift esc": chr(7)+NULL_CHAR,
+            "ctrl alt shift": chr(7)+NULL_CHAR,
+            "alt shift ctrl": chr(7)+NULL_CHAR, 
+            "alt ctrl shift": chr(7)+NULL_CHAR, 
+            "shift alt ctrl": chr(7)+NULL_CHAR, 
+            "shift ctrl alt": chr(7)+NULL_CHAR, 
 }
 # if key is not dictionary - > send individual keys (like ctrl c)
 keyDict = { "del": (NULL_CHAR+chr(76)+NULL_CHAR*5),
@@ -25,7 +36,22 @@ keyDict = { "del": (NULL_CHAR+chr(76)+NULL_CHAR*5),
             "f11":(chr(68)+NULL_CHAR*5),
             "f12":(chr(69)+NULL_CHAR*5),
             "tab":(chr(43)+NULL_CHAR*5),
-            "capslock":(chr(57)+NULL_CHAR*5)
+            "capslock":(chr(57)+NULL_CHAR*5),
+            "ctrl": (chr(1)+NULL_CHAR*7),
+            "alt": (chr(4)+NULL_CHAR*7),
+            "shift":(chr(2)+NULL_CHAR*7),
+            "ctrl alt": (chr(5)+NULL_CHAR*7),
+            "alt ctrl": (chr(5)+NULL_CHAR*7),
+            "shift ctrl": chr(3)+NULL_CHAR*7,
+            "ctrl shift": chr(3)+NULL_CHAR*7, 
+            "alt shift": chr(6)+NULL_CHAR*7,
+            "shift alt": chr(6)+NULL_CHAR*7,
+            "ctrl shift alt": chr(7)+NULL_CHAR*7,
+            "ctrl alt shift": chr(7)+NULL_CHAR*7,
+            "alt shift ctrl": chr(7)+NULL_CHAR*7, 
+            "alt ctrl shift": chr(7)+NULL_CHAR*7, 
+            "shift alt ctrl": chr(7)+NULL_CHAR*7, 
+            "shift ctrl alt": chr(7)+NULL_CHAR*7, 
 }
 
 class keyboardDevice:
@@ -80,67 +106,7 @@ class keyboardDevice:
             print("Sending "+c+"...")
             self.write_report(self.char_to_reports(c))
             self.release()
-    def sendCTRL(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(chr(1)+NULL_CHAR*7)
-    def sendCTRLESC(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(chr(1)+chr(41)+NULL_CHAR*5)    
 
-    def sendALT(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(chr(4)+NULL_CHAR*7)
-        self.release()
-    def sendENTER(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(NULL_CHAR*2+chr(40)+NULL_CHAR*5)
-        self.release()
-    # Function keys 3A to 45
-    def sendFunction(self,x):
-        if x>=1 and x<=12:
-            NULL_CHAR = self.NULL_CHAR
-            self.write_report(NULL_CHAR*2+chr(57+x)+NULL_CHAR*5)
-            self.release()
-        else:
-            print("Invalid function key!")
-    def sendSPACE(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(NULL_CHAR*2+chr(44)+NULL_CHAR*5)
-        self.release()
-    def sendCAPS(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(NULL_CHAR*2+chr(57)+NULL_CHAR*5)
-        self.release()
-    def sendESC(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(NULL_CHAR*2+chr(41)+NULL_CHAR*5)
-        self.release()
-    def sendTAB(self):
-        NULL_CHAR = self.NULL_CHAR
-        self.write_report(NULL_CHAR*2+chr(43)+NULL_CHAR*5)
-        self.release()
-    def sendALTTAB(self):
-        NULL_CHAR = self.NULL_CHAR   
-        self.write_report(chr(14)+chr(2)+chr(43)+NULL_CHAR*5)
-        self.release()
-    def sendBACKSPACE(self,n):
-        NULL_CHAR = self.NULL_CHAR
-        for i in range(n):
-            self.write_report(NULL_CHAR*2+chr(42)+NULL_CHAR*5)
-            self.release()
-    def sendDEL(self,n):
-        NULL_CHAR = self.NULL_CHAR
-        for i in range(n):
-            self.write_report(NULL_CHAR*2+chr(76)+NULL_CHAR*5)
-            self.release()
-    def sendALTFunction(self,x):
-        if x>=1 and x<=12:
-            NULL_CHAR = self.NULL_CHAR
-            self.write_report(chr(14)+chr(2)+chr(57+x)+NULL_CHAR*5)
-            self.release()
-        else:
-            print("Invalid function key!")
-        
     def sendKey(self,keystr,modifier=None):
         NULL_CHAR = self.NULL_CHAR
         KEY_CHAR = NULL_CHAR*6
@@ -153,17 +119,25 @@ class keyboardDevice:
             modifier = modifier.lower()
             MODI_CHAR = modiDict.get(modifier)
         else:
-            print("Invalid argument!")
+            print("Invalid modifier!")
+            return
 
-
+        
         if isinstance(keystr, str):
-            if keystr in keyDict:
+            if keystr in modiDict:
                 KEY_CHAR = keyDict.get(keystr)
-                self.write_report(MODI_CHAR+KEY_CHAR)
+                self.write_report(KEY_CHAR) #FIX IN DICTIONARY
                 self.release()
             else:
-                for c in keystr:
-                    print("Sending "+c+"...")
-                    KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
+                if keystr in keyDict:
+                    KEY_CHAR = keyDict.get(keystr)
                     self.write_report(MODI_CHAR+KEY_CHAR)
                     self.release()
+                else:
+                    for c in keystr:
+                        print("Sending "+c+"...")
+                        KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
+                        self.write_report(MODI_CHAR+KEY_CHAR)
+                        self.release()
+        else:
+            print("Argument is not a string!")
