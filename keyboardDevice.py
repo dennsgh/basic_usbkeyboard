@@ -57,15 +57,16 @@ keyDict = { "del": (NULL_CHAR+chr(76)+NULL_CHAR*5),
 class keyboardDevice:
     NULL_CHAR = chr(0)
     rel_seq = NULL_CHAR*8
-    def write_report(self,report):
+    
+    def __write_report(self,report):
         with open('/dev/hidg0', 'rb+') as fd:
             print(report.encode())
             fd.write(report.encode())
-    def release(self):
+    def __release(self):
         with open('/dev/hidg0', 'rb+') as fd:
             fd.write(self.rel_seq.encode())
     # a would be NULL_CHAR*2 + chr()
-    def char_to_reports(self,char):
+    def __char_to_reports(self,char):
         NULL_CHAR = self.NULL_CHAR
         c=ord(char)
         if c>=97 and c<=122:#lower
@@ -82,7 +83,7 @@ class keyboardDevice:
             return(chr(32)+NULL_CHAR+chr(36)+NULL_CHAR*5)
         elif c==32: #whitespace, do print(ord(' ')) to check what whitespace c=ord(char) does
             return(NULL_CHAR*2+chr(44)+NULL_CHAR*5)
-    def char_to_reports_NO_MODIFIER(self,char):
+    def __char_to_reports_NO_MODIFIER(self,char):
         NULL_CHAR = self.NULL_CHAR
         c=ord(char)
         if c>=97 and c<=122:#lower
@@ -104,8 +105,8 @@ class keyboardDevice:
         NULL_CHAR = self.NULL_CHAR
         for c in string:
             print("Sending "+c+"...")
-            self.write_report(self.char_to_reports(c))
-            self.release()
+            self.__write_report(self.__char_to_reports(c))
+            self.__release()
 
     def sendKey(self,keystr,modifier=None):
         NULL_CHAR = self.NULL_CHAR
@@ -126,20 +127,23 @@ class keyboardDevice:
         if isinstance(keystr, str):
             if keystr in modiDict:
                 KEY_CHAR = keyDict.get(keystr)
-                self.write_report(KEY_CHAR) #FIX IN DICTIONARY
-                self.release()
+                self.__write_report(KEY_CHAR) #FIX IN DICTIONARY
+                self.__release()
             else:
                 if keystr in keyDict:
                     print("Sending "+modifier+"+"+keystr+"...")
                     KEY_CHAR = keyDict.get(keystr)
-                    self.write_report(MODI_CHAR+KEY_CHAR)
-                    self.release()
+                    self.__write_report(MODI_CHAR+KEY_CHAR)
+                    self.__release()
                 else:
                     for c in keystr:
                         print("Sending "+modifier+"+"+c+"...")
                         KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
-                        self.write_report(MODI_CHAR+KEY_CHAR)
-                        self.release()
+                        self.__write_report(MODI_CHAR+KEY_CHAR)
+                        self.__release()
         else:
             print("Argument is not a string!")
             return
+
+k=keyboardDevice()
+k.sendKey("tab","alt")
