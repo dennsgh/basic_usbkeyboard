@@ -144,6 +144,3 @@ class keyboardDevice:
         else:
             print("Argument is not a string!")
             return
-
-k=keyboardDevice()
-k.sendKey("tab","alt")
