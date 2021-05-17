@@ -170,5 +170,3 @@ class keyboardDevice:
                     self.release()
             
         
-k = keyboardDevice()
-k.sendKey("del","ctrl")
