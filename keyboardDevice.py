@@ -1,12 +1,11 @@
-import time
 # currently missing some other important keystrokes
 # FORMAT is first two bytes are MODIFIER keys, 0x00XXXXXX means whatever you send had no modifier keys
 # 0xXX580000 is ENTER for example, with 0xE2580000 it'd be ENTER with ALT
 NULL_CHAR = chr(0)
 modiDict = {"ctrl": chr(1)+NULL_CHAR, 
             "alt": chr(4)+NULL_CHAR, 
-            "ctrl alt": chr(5), 
-            "alt ctrl": chr(5), 
+            "ctrl alt": chr(5)+NULL_CHAR, 
+            "alt ctrl": chr(5)+NULL_CHAR, 
 }
 # if key is not dictionary - > send individual keys (like ctrl c)
 keyDict = { "del": (NULL_CHAR+chr(76)+NULL_CHAR*5),
@@ -168,5 +167,6 @@ class keyboardDevice:
                     KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
                     self.write_report(MODI_CHAR+KEY_CHAR)
                     self.release()
-            
-        
+
+k = keyboardDevice()
+k.sendKey("f1","ctrl alt")
