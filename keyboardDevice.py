@@ -112,13 +112,17 @@ class keyboardDevice:
         NULL_CHAR = self.NULL_CHAR
         KEY_CHAR = NULL_CHAR*6
         keystr = keystr.lower()
-
+        bUseModifier = False
 
         if modifier is None:
             MODI_CHAR = NULL_CHAR*2
+            modifier = "<>"
+            
         elif isinstance(modifier, str) :
+            bUseModifier = True
             modifier = modifier.lower()
             MODI_CHAR = modiDict.get(modifier)
+            modifier = f"<{modifier}>"
         else:
             print("Invalid modifier!")
             return
@@ -131,14 +135,15 @@ class keyboardDevice:
                 self.__release()
             else:
                 if keystr in keyDict:
-                    print("Sending "+modifier+"+"+keystr+"...")
+                    
+                    print("Sending " + modifier + "+"+keystr+"...")
                     KEY_CHAR = keyDict.get(keystr)
                     self.__write_report(MODI_CHAR+KEY_CHAR)
                     self.__release()
                 else:
                     for c in keystr:
-                        print("Sending "+modifier+"+"+c+"...")
-                        KEY_CHAR = self.char_to_reports_NO_MODIFIER(c)
+                        print("Sending"+c+"...")
+                        KEY_CHAR = self.__char_to_reports_NO_MODIFIER(c)
                         self.__write_report(MODI_CHAR+KEY_CHAR)
                         self.__release()
         else:
